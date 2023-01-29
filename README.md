@@ -1,2 +1,3 @@
 # simple-agent
-a simple agent code by jvmti
+
+A simple agent that may leak memory
