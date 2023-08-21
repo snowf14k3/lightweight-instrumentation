@@ -42,7 +42,62 @@
 /* jni_md.h contains the machine-dependent typedefs for jbyte, jint
    and jlong */
 
-#include "jni_md.h"
+
+/* jni_md.h contains the machine-dependent typedefs for jbyte, jint
+   and jlong */
+
+// begin inlined jni_md.h
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+    #ifndef JNIEXPORT
+        #define JNIEXPORT __declspec(dllexport)
+    #endif
+    #define JNIIMPORT __declspec(dllimport)
+    #define JNICALL __stdcall
+
+    // 'long' is always 32 bit on windows so this matches what jdk expects
+    typedef long jint;
+    typedef __int64 jlong;
+    typedef signed char jbyte;
+#else
+    #ifndef __has_attribute
+        #define __has_attribute(x) 0
+    #endif
+
+    #ifndef JNIEXPORT
+        #if (defined(__GNUC__) && ((__GNUC__ > 4) || (__GNUC__ == 4) && (__GNUC_MINOR__ > 2))) || __has_attribute(visibility)
+            #ifdef ARM
+                #define JNIEXPORT     __attribute__((externally_visible,visibility("default")))
+            #else
+                #define JNIEXPORT     __attribute__((visibility("default")))
+            #endif
+        #else
+            #define JNIEXPORT
+        #endif
+    #endif
+
+    #if (defined(__GNUC__) && ((__GNUC__ > 4) || (__GNUC__ == 4) && (__GNUC_MINOR__ > 2))) || __has_attribute(visibility)
+        #ifdef ARM
+            #define JNIIMPORT     __attribute__((externally_visible,visibility("default")))
+        #else
+            #define JNIIMPORT     __attribute__((visibility("default")))
+        #endif
+    #else
+        #define JNIIMPORT
+    #endif
+
+    #define JNICALL
+
+    typedef int jint;
+    #ifdef _LP64
+    typedef long jlong;
+    #else
+    typedef long long jlong;
+    #endif
+
+    typedef signed char jbyte;
+#endif
+// end inlined jni_md.h
+
 
 #ifdef __cplusplus
 extern "C" {
