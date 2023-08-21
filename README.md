@@ -1,5 +1,8 @@
 # simple-agent
 
-## simple agent 
+---
 
-- classtransform
+## features
+- classTransform
+- redefineClass
+- retransformClass
