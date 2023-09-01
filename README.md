@@ -26,9 +26,9 @@ public class SClassTransformer {
     /* add your custom Transfomer here*/
     public static ArrayList<Transformer> list = new ArrayList();
 
-    public static void redefineClass(Class<?> clazz,byte[] bytes);
+    public native static void redefineClass(Class<?> clazz,byte[] bytes);
     
-    public static void retransformClass(Class<?> clazz); 
+    public native static void retransformClass(Class<?> clazz); 
 
     public static byte[] tansform(String name,byte[] orignalBytes){
        for(Transformer transfomer : SClassTransformer.list)
