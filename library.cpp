@@ -2,7 +2,7 @@
 #include <memory.h>
 
 static jvmtiEnv *jvmti = NULL;
-static jclass classClassUtil = NULL;
+static jclass transfomerClazz = NULL;
 static jmethodID methodID = NULL;
 
 jbyteArray asByteArray(JNIEnv *env, const unsigned char *buf, int len)
@@ -42,7 +42,7 @@ void JNICALL classFileLoadHook(jvmtiEnv *jvmti,
     memcpy(*new_data, data, data_len);
 
     const jbyteArray plainBytes = asByteArray(env, *new_data, *new_data_len);
-    jbyteArray newByteArray = (jbyteArray)env->CallStaticObjectMethod(classClassUtil, methodID, env->NewStringUTF(name), plainBytes);
+    jbyteArray newByteArray = (jbyteArray)env->CallStaticObjectMethod(transfomerClazz, methodID, env->NewStringUTF(name), plainBytes);
 
     unsigned char *newChars = asUnsignedCharArray(env, newByteArray);
     const jint newLength = (jint)env->GetArrayLength(newByteArray);
@@ -76,15 +76,15 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
     vm->GetEnv((void **)&env, JNI_VERSION_1_8);
     vm->GetEnv((void **)&jvmti, JVMTI_VERSION_1_1);
 
-    classClassUtil = (jclass)env->FindClass("com/utils/ClassUtils");
+    transfomerClazz = (jclass)env->FindClass("com/alphaautoleak/SClassTransformer");
 
     JNINativeMethod table[] = {
         {"redefineClass", "(Ljava/lang/Class;[B)V,", redefineClass},
         {"retransformClass", "(Ljava/lang/Class;)V", retransformClass}};
 
-    env->RegisterNatives(classClassUtil, table, 2);
+    env->RegisterNatives(transfomerClazz, table, 2);
 
-    methodID = env->GetStaticMethodID(classClassUtil, "tansformer", "(Ljava/lang/String;[B)[B");
+    methodID = env->GetStaticMethodID(transfomerClazz, "tansform", "(Ljava/lang/String;[B)[B");
 
     jvmtiCapabilities caps;
     memset(&caps, 0, sizeof(caps));
