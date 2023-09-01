@@ -12,7 +12,7 @@
 
 @Test
 public void test(){
-    SClassTransformer.list.add(new CustomeTransfomer());
+    SClassTransformer.list.add(new CustomTransfomer());
 }
 
 ```
